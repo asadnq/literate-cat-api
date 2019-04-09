@@ -7,7 +7,7 @@ class CartSchema extends Schema {
   up () {
     this.create('carts', (table) => {
       table.increments();
-      table.integer('product_id').unsigned().references('products.id').onDelete('cascade');
+      table.integer('book_id').unsigned();
       table.integer('quantity');
       table.integer('price_sum');
       table.timestamps();

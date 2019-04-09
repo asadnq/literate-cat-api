@@ -9,7 +9,7 @@
  */
 const Cart = use('App/Models/Cart');
 const Database = use('Database');
-const Product = use('App/Models/Product');
+const Book = use('App/Models/Book');
 
 class CartController {
   /**
@@ -24,18 +24,18 @@ class CartController {
   async index ({ request, response, view }) {
 
     const query = await Database.select('carts.id',
-                  'carts.product_id', 'products.name', 'products.price',
-                  'products.description', 'products.cover_image', 'carts.price_sum',
+                  'carts.book_id', 'books.name', 'books.price',
+                  'books.description', 'books.cover_image', 'carts.price_sum',
                   'carts.created_at','carts.updated_at', 'carts.quantity').from('carts').
-              leftJoin('products', 'carts.product_id', 'products.id');
+              leftJoin('books', 'carts.book_id', 'books.id');
 
     const total = await Database.table('carts').getSum('price_sum');
 
     await response.json({
-      message: 'products list fetched',
+      message: 'cart list fetched',
       data: query,
       total
-    })
+    });
   }
 
   /**
@@ -60,30 +60,35 @@ class CartController {
    */
   async store ({ request, response }) {
 
-  	const { product_id, quantity, price_sum } = request.post();
+  	const { book_id, quantity, price_sum } = request.post();
 
-    const product = await Product.find(product_id);
-    const check = await Database.from('carts').where('product_id', product_id);
+    const book = await Book.find(book_id);
+    const check = await Database.from('carts').where('book_id', book_id);
 
     if(check.length > 0) {
-      const summed = product.price * quantity;
-      const cart = await Cart.query().where('product_id', product_id).update({
+      const summed = book.price * quantity;
+      const cart = await Cart.query().where('book_id', book_id).update({
         quantity: quantity + quantity,
         price_sum: price_sum + summed
       });  
       response.status(201).json({
-        message: 'quantity added'})
+        message: 'quantity added.',
+        cart
+        });
     }
 
     else {
-    	const created_cart = await Cart.create({product_id, quantity, price_sum});
+    	const created_cart = await Cart.create({book_id, quantity, price_sum});
 
       const cart = await Cart.find(created_cart.id);
-      const product = await cart.product().fetch();
+      // const book_id await cart.book_id;
+      const book = await cart.book().fetch();
 
-      const merged = { ...cart.toJSON(), ...product.toJSON() };
+      // const merged = { ...book.toJSON(), ...cart.toJSON() };
 
-    	response.status(201).json({
+      const merged = await Object.assign( book.toJSON(), cart.toJSON());
+
+    	await response.status(201).json({
     		message: 'Succesfully created new cart.',
     		cart: merged
     	});
@@ -142,13 +147,13 @@ class CartController {
   }
 
   async test({params, request, response}) {
+    const cart = await Cart.find(1);
 
-    const cart = await Cart.find(11);
-    const product = await cart.product().fetch();
-
-    const merged = {...product.toJSON(),...cart.toJSON()}
-    return merged;
+    return await response.send(cart.id);
   }
+
+
+
 }
 
 module.exports = CartController

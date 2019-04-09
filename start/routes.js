@@ -17,8 +17,8 @@
 const Route = use('Route');
 
 Route.on('/').render('welcome');
-Route.get('/products', 'ProductController.all');
-Route.get('/products/:id', 'ProductController.details');
+Route.get('/books', 'BookController.all');
+Route.get('/books/:id', 'BookController.details');
 
 Route.get('/carts', 'CartController.index');
 Route.post('/carts', 'CartController.store');

@@ -5,8 +5,8 @@ const Model = use('Model')
 
 class Cart extends Model {
 
-	product() {
-		return this.hasOne('App/Models/Product', 'product_id', 'id');
+	book() {
+		return this.hasOne('App/Models/Book', 'book_id', 'id');
 	}
 }
 
