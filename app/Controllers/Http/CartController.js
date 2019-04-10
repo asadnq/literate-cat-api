@@ -31,23 +31,11 @@ class CartController {
 
     const total = await Database.table('carts').getSum('price_sum');
 
-    await response.json({
+    response.json({
       message: 'cart list fetched',
       data: query,
       total
     });
-  }
-
-  /**
-   * Render a form to be used for creating a new cart.
-   * GET carts/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
   }
 
   /**
@@ -65,6 +53,7 @@ class CartController {
     const book = await Book.find(book_id);
     const check = await Database.from('carts').where('book_id', book_id);
 
+    // if the same cart have the same product
     if(check.length > 0) {
       const summed = book.price * quantity;
       const cart = await Cart.query().where('book_id', book_id).update({
@@ -73,7 +62,7 @@ class CartController {
       });  
       response.status(201).json({
         message: 'quantity added.',
-        cart
+        data: cart
         });
     }
 
@@ -81,16 +70,14 @@ class CartController {
     	const created_cart = await Cart.create({book_id, quantity, price_sum});
 
       const cart = await Cart.find(created_cart.id);
-      // const book_id await cart.book_id;
+
       const book = await cart.book().fetch();
-
-      // const merged = { ...book.toJSON(), ...cart.toJSON() };
-
+      //merge cart and matched product to be put in response 
       const merged = await Object.assign( book.toJSON(), cart.toJSON());
 
-    	await response.status(201).json({
-    		message: 'Succesfully created new cart.',
-    		cart: merged
+    	response.status(201).json({
+    		message: 'Succesfully created a new cart.',
+    		data: merged
     	});
     }
   }
@@ -104,19 +91,13 @@ class CartController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show ({ params, request, response }) {
+    const cart = await Cart.find(params.id);
 
-  /**
-   * Render a form to update an existing cart.
-   * GET carts/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    response.status(201).json({
+      message: 'Here is your cart.'
+    })
+
   }
 
   /**
@@ -128,6 +109,19 @@ class CartController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
+
+    const { book_id, quantity, price_sum } = request.post();
+
+    const cart = await Cart.find(params.id);
+
+    cart.merge({book_id, quantity, price_sum});
+
+    await cart.save();
+
+    response.status(200).json({
+      message: 'Successfully updated this cart.',
+      data: cart
+    })
   }
 
   /**
@@ -143,13 +137,16 @@ class CartController {
 
     await cart.delete();
 
-    response.json(cart);
+    response.status(200).json({
+      response: 'Successfully deleted this cart.',
+      data: cart
+    });
   }
 
   async test({params, request, response}) {
     const cart = await Cart.find(1);
 
-    return await response.send(cart.id);
+    response.send(cart.id);
   }
 
 
