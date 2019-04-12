@@ -56,13 +56,16 @@ class CartController {
     // if the same cart have the same product
     if(check.length > 0) {
       const summed = book.price * quantity;
-      const cart = await Cart.query().where('book_id', book_id).update({
-        quantity: quantity + quantity,
-        price_sum: price_sum + summed
-      });  
+      const cart = await Cart.query().where('book_id', book_id).first();
+
+      cart.quantity = cart.quantity + quantity;
+      cart.price_sum = cart.price_sum + summed;
+
+      await cart.save();
+
       response.status(201).json({
-        message: 'quantity added.',
-        data: cart
+          message: 'Quantity added.',
+          data: cart.toJSON()
         });
     }
 
@@ -95,7 +98,8 @@ class CartController {
     const cart = await Cart.find(params.id);
 
     response.status(201).json({
-      message: 'Here is your cart.'
+      message: 'Here is your cart.',
+      data: cart
     })
 
   }
@@ -149,7 +153,16 @@ class CartController {
     response.send(cart.id);
   }
 
+  async getProduct({params, response}) {
+    const cart = await Cart.find(params.id);
 
+    const book = await cart.book().fetch();
+
+    response.status(200).json({
+      message: `this is product from cart with id${params.id}.`,
+      data: book 
+    })
+  }
 
 }
 
