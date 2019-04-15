@@ -2,6 +2,8 @@
 'use strict'
 
 const Book = use('App/Models/Book');
+const Genre = use('App/Models/Genre');
+const GenreList = use('App/Models/GenreList');
 const Database = use('Database');
 
 class BookController {
@@ -58,8 +60,30 @@ class BookController {
                 data: books
             })
         }
+    }
 
-        
+    async getGenre({params, response}) {
+        const genre = await Database
+                        .select('genre_lists.name')
+                        .from('genre_lists')
+                        .leftJoin('genres', 'genre_lists.id', 'genres.genre_id')
+                        .leftJoin('books', 'books.id', 'genres.book_id')
+                        .where('books.id', params.id);
+
+
+        const find_book = await Book.find(params.id);
+
+        const book = find_book.toJSON();
+
+        let list = [];
+
+        genre.map(g => list.push(g.name));
+
+        response.status(200).json({
+            message: 'genre fetched',
+            data: {...book,
+                    genre: list}
+        })
     }
  }
 

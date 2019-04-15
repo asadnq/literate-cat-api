@@ -10,6 +10,7 @@ Route.group(() =>  {
 	Route.resource('authors', 'AuthorController').apiOnly();
 	Route.get('books/:id/authors', 'BookController.getAuthor');
 	Route.get('authors/:id/books', 'AuthorController.getBooks');
-	Route.get('books/name/:name', 'BookController.searchBook')
+	Route.get('books/name/:name', 'BookController.searchBook');
+	Route.get('books/:id/genres', 'BookController.getGenre');
 }).prefix('api/v1');
 Route.get('test', 'CartController.test');
