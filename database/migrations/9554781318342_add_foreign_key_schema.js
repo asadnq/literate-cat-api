@@ -14,7 +14,15 @@ class AddForeignKeySchema extends Schema {
     this.alter('carts', (table) => {
       table.foreign('book_id').references('books.id')
               .onDelete('cascade').onUpdate('cascade');
-    })
+      table.foreign('user_id').references('users.id')
+              .onDelete('cascade').onUpdate('cascade');
+    });
+    this.alter('genres', table => {
+      table.foreign('book_id').references('books.id')
+              .onDelete('cascade').onUpdate('cascade');
+      table.foreign('genre_id').references('genre_lists.id')
+              .onDelete('cascade').onUpdate('casacade');
+    });
   }
 
   down () {
