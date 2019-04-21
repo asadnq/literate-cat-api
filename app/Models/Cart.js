@@ -8,6 +8,10 @@ class Cart extends Model {
 	book() {
 		return this.hasOne('App/Models/Book', 'book_id', 'id');
 	}
+
+	user() {
+		return this.belongsTo('App/Models/User', 'user_id', 'id');
+	}
 }
 
 module.exports = Cart

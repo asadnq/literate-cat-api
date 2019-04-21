@@ -7,8 +7,8 @@ class GenresSchema extends Schema {
   up () {
     this.create('genres', (table) => {
       table.increments();
-      table.integer('user_id').unsinged();
-      table.integer('genre_id').unsinged();
+      table.integer('book_id').unsigned();
+      table.integer('genre_id').unsigned();
       table.timestamps();
     })
   }

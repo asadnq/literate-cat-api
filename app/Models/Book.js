@@ -10,6 +10,9 @@ class Book extends Model {
 	genres() {
 		return this.hasMany('App/Models/Genre', 'id', 'book_id');
 	}
+	genreList() {
+		return this.manyThrough('App/Models/Genre', 'genreList');
+	}
 }
 
 module.exports = Book

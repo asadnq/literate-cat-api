@@ -7,7 +7,6 @@ class ProductsSchema extends Schema {
   up () {
     this.create('books', (table) => {
       table.increments();
-      table.integer('category_id').unsigned();
       table.integer('author_id').unsigned();
       table.string('name', 120);
       table.text('description');

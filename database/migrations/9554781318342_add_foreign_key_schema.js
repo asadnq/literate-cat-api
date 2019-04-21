@@ -6,8 +6,6 @@ const Schema = use('Schema')
 class AddForeignKeySchema extends Schema {
   up () {
     this.alter('books', (table) => {
-      table.foreign('category_id').references('categories.id')
-        .onDelete('cascade').onUpdate('cascade');
       table.foreign('author_id').references('authors.id')
         .onDelete('cascade').onUpdate('cascade');
     });
@@ -21,7 +19,7 @@ class AddForeignKeySchema extends Schema {
       table.foreign('book_id').references('books.id')
               .onDelete('cascade').onUpdate('cascade');
       table.foreign('genre_id').references('genre_lists.id')
-              .onDelete('cascade').onUpdate('casacade');
+              .onDelete('cascade').onUpdate('cascade');
     });
   }
 
