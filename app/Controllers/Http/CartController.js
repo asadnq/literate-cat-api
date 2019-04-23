@@ -36,7 +36,7 @@ class CartController {
       response.json({
         message: 'cart list fetched',
         data: {
-            carts: carts,
+            carts,
             total
           }
       });

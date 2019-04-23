@@ -31,8 +31,8 @@ class AuthController {
 			await user.save();
 
 			let accessToken = await auth.generate(user);
-			
-			response.status(200).json({
+
+			return response.status(200).json({
 				message: 'user created',
 				user,
 				access_token: accessToken
@@ -48,9 +48,10 @@ class AuthController {
 			const { email, password } = request.all();
 			if(await auth.attempt(email, password)) {
 				let user = await User.findBy('email', email);
-				let accessToken = await auth.generate(user).withRefreshToken();
+				// let accessToken = await auth.withRefreshToken().generate(user);
+				let accessToken = await auth.generate(user);
 
-				response.json({
+				return response.json({
 					user,
 					access_token: accessToken
 				});
