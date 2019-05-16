@@ -25,11 +25,11 @@ class CartController {
     try {
       const user = await auth.getUser();
 
-      const carts = await Database.select('carts.id',
-                    'carts.book_id', 'books.name', 'books.price',
-                    'books.description', 'books.cover_image', 'carts.price_sum',
-                    'carts.created_at','carts.updated_at', 'carts.quantity').from('carts')
-                    .leftJoin('books', 'carts.book_id', 'books.id').where('user_id', user.id);
+      const query = Cart.query()
+      query.with('book.genres');
+      query.with('book.author');
+
+      const carts = await query.where('user_id', user.id).fetch();
 
       const total = await Database.from('carts').where('user_id', user.id).getSum('price_sum');
 
@@ -170,26 +170,6 @@ class CartController {
       });
     } catch(err) {
       throw err
-    }
-  }
-
-  async test({auth, params, request, response}) {
-      const book =  await Book.query().where('author_id', 1).andWhere('id', 1).fetch();
-      return response.send(book.toJSON());
-  }
-
-  async getProduct({params, response}) {
-    try {
-      const cart = await Cart.find(params.id);
-
-      const book = await cart.book().fetch();
-
-      response.status(200).json({
-        message: `this is product from cart with id${params.id}.`,
-        data: book
-      })
-    } catch(err) {
-      throw err;
     }
   }
 

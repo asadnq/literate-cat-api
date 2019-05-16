@@ -8,10 +8,7 @@ class Book extends Model {
 		return this.belongsTo('App/Models/Author', 'author_id', 'id');
 	}
 	genres() {
-		return this.hasMany('App/Models/Genre', 'id', 'book_id');
-	}
-	genreList() {
-		return this.manyThrough('App/Models/Genre', 'genreList');
+		return this.manyThrough('App/Models/Genre', 'genreList', 'id', 'book_id');
 	}
 }
 
