@@ -23,5 +23,5 @@ Route.group(() => {
 Route.group(() => {
   Route.get('province', 'RajaOngkirController.getProvince');
   Route.get('city', 'RajaOngkirController.getCity');
-  Route.get('cost', 'RajaOngkirController.getCost');
+  Route.post('cost', 'RajaOngkirController.getCost');
 }).prefix('api/v1/rajaongkir');

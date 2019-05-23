@@ -1,19 +1,19 @@
-'use strict';
+"use strict";
 
-const Env = use('Env');
-const axios = require('axios');
+const Env = use("Env");
+const axios = require("axios");
 
 const instance = axios.create({
-  baseURL: Env.get('RAJA_ONGKIR_API_URL'),
+  baseURL: Env.get("RAJA_ONGKIR_API_URL"),
   headers: {
-    key: Env.get('RAJA_ONGKIR_API_KEY')
+    key: Env.get("RAJA_ONGKIR_API_KEY")
   }
 });
 
 class RajaOngkirController {
   async getProvince({ response }) {
     return instance
-      .get('/province')
+      .get("/province")
       .then(res => {
         return response.json({ data: res.data });
       })
@@ -24,7 +24,7 @@ class RajaOngkirController {
 
   async getCity({ response, request }) {
     const getRequest = request.get();
-    const province_id = getRequest.province;
+    const province_id = getRequest.province || "";
     return instance
       .get(`/city?province=${province_id}`)
       .then(res => {
@@ -39,14 +39,14 @@ class RajaOngkirController {
     const { origin, destination, weight, courier } = request.post();
 
     const requestBody = {
-        origin,
-        destination,
-        weight,
-        courier
-    }    
+      origin,
+      destination,
+      weight,
+      courier
+    };
 
     return instance
-      .post('/cost', requestBody)
+      .post("/cost", requestBody)
       .then(res => {
         return response.json({ data: res.data });
       })
