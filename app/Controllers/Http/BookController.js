@@ -42,7 +42,7 @@ class BookController {
 
       query.with('author');
       query.with('genres');
-      const books = await query.paginate(page, limit);
+      const books = await query.groupBy('books.id').paginate(page, limit);
       response.status(200).json(books);
     } catch (err) {
       console.log(err);
