@@ -36,8 +36,8 @@ class RajaOngkirController {
   }
 
   async getCost({ response, request }) {
-    const { origin, destination, weight, courier } = request.post();
-
+    const { destination, weight, courier } = request.post();
+    const origin = "457";
     const requestBody = {
       origin,
       destination,

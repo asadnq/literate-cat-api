@@ -62,10 +62,11 @@ class CartController {
       const book = await Book.find(book_id);
       const check = await Database.from('carts')
                     .where('book_id', book_id)
-                    .andWhere('user_id', user.id);
+                    .andWhere('user_id', user.id).first();
 
       // if the same cart have the same product
-      if(check.length > 0) {
+      if(check) {
+        console.log(book.id, check.id)
         const summed = book.price * quantity;
         const cart = await Cart.find(check.id);
 
@@ -82,16 +83,15 @@ class CartController {
 
       else {
       	const created_cart = await Cart.create({book_id, quantity, price_sum, user_id: user.id});
+         const query = Cart.query()
+         query.with('book.genres');
+         query.with('book.author');
 
-        const cart = await Cart.find(created_cart.id);
-
-        const book = await cart.book().fetch();
-        //merge cart and matched product to be put in response
-        const merged = await Object.assign( book.toJSON(), cart.toJSON());
+         const cart = await query.where('id', created_cart.id).first();
 
       	response.status(201).json({
       		message: 'Succesfully created a new cart.',
-      		data: merged
+      		data: cart
       	});
       }
     } catch(err) {
